@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            text-align: center;
+            width: 400px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .text-area {
+            width: 100%;
+            height: 100px;
+            font-size: 16px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        #qrcode {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            display: none;
+        }
+
+        .generate-button {
+            background-color: #007bff;
+            color: #fff;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <form action="/generate_qr_code" method="post" id="qr-form">
+            <label for="qr_data" class="input-label">Input Text:</label>
+            <textarea id="qr_data" name="qr_data" class="text-area" placeholder="Enter your text here"></textarea>
+            <button type="submit" class="generate-button" id="generate-button">Generate QR Code</button>
+        </form>
+        <img id="qrcode" src=""></img>
+    </div>
+
+    <script>
+        const form = document.getElementById('qr-form');
+        const generateButton = document.getElementById('generate-button');
+        const qrCode = document.getElementById('qrcode');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            console.log(document.getElementById("qr_data").value);
+
+            const response = await fetch('/api?' + "qr_data=" + document.getElementById("qr_data").value, {
+                method: 'GET',
+            });
+
+            if (response.ok) {
+
+                const qrCodeURL = await response.blob();
+                qrCode.src = URL.createObjectURL(qrCodeURL);
+                // qrCode.src = "https://blog.udemy.com/wp-content/uploads/2014/05/bigstock-test-icon-63758263.jpg"
+                qrCode.style.display = 'block';
+            } else {
+                console.error('QR code generation failed.');
+            }
+        });
+    </script>
+</body>
+
+</html>
